@@ -28,14 +28,6 @@ module Tempest
       @id = 0
     end
 
-    def client server
-      unless @_client.key? server
-        hp = server.split(':')
-        @_client[server] = Redis.new host: hp[0], port: hp[1].to_i
-      end
-      @_client[server]
-    end
-
     def on action, &block
       @_on[action] = block
     end
@@ -44,7 +36,7 @@ module Tempest
     def loop
       @loop = true
       while @loop
-        task = client(REDIS).blpop 'working', 0
+        task = Tempest.client(REDIS).blpop 'working', 0
         if task
           cmd, args, answer, job_id = JSON.parse(task[1])
           @_on[cmd.to_sym].call Context.new(self, answer, job_id), *args
@@ -53,16 +45,25 @@ module Tempest
     end
 
     def answer who, action, job_id, args
-      client(who).send action, job_id, args.to_json
+      Tempest.client(who).send action, job_id, args.to_json
     end
 
     def work queue, action, args, respond_to
       #FIXME implement the real id tactic
       @id += 1
-      client(REDIS).rpush queue, [action, args, respond_to, @id].to_json
+      Tempest.client(REDIS).rpush queue, [action, args, respond_to, @id].to_json
       @id
     end
 
   end
 
+  @clients = {}
+
+  def self.client server
+    unless @clients.key? server
+      hp = server.split(':')
+      @clients[server] = Redis.new host: hp[0], port: hp[1].to_i
+    end
+    @clients[server]
+  end
 end
