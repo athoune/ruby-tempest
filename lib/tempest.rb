@@ -9,9 +9,7 @@ class Tempest_bloc
   end
 
   def worker queue, &block
-    w = Worker.new @cluster, queue, &block
-    w.loop
-    w
+    Worker.new @cluster, queue, &block
   end
 
 end
@@ -36,7 +34,7 @@ class Worker
     @cluster.work @queue, action, *args, respond_to
   end
 
-  def loop
+  def start_loop
     @cluster.loop
   end
 

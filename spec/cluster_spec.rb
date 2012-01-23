@@ -18,7 +18,7 @@ describe Tempest::Cluster do
 
         work :foo, nil, 'bar'
 
-      end
+      end.start_loop
     end
 
     $msg.should == 'bar'
