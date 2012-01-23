@@ -6,6 +6,12 @@ Ruby client for joining a [tempest cluster](https://github.com/athoune/node-temp
 Test
 ----
 
+Launch a redis server:
+
+    redis-server
+
+Lauch the tests:
+
     rspec
 
 Status
