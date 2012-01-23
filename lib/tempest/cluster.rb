@@ -5,11 +5,25 @@ REDIS = 'localhost:6379'
 
 module Tempest
 
+  class Context
+    attr_reader :respond_to, :job_id
+    def initialize cluster, respond_to, job_id
+      @respond_to = respond_to
+      @job_id = job_id
+      @cluster = cluster
+    end
+
+    def stop
+      @cluster.loop = false
+    end
+  end
+
   class Cluster
 
-
+    attr_accessor :loop
     def initialize
       @_client = {}
+      @_on = {}
       @loop = true
       @id = 0
     end
@@ -22,13 +36,18 @@ module Tempest
       @_client[server]
     end
 
+    def on action, &block
+      @_on[action] = block
+    end
+
+
     def loop
       @loop = true
       while @loop
         task = client(REDIS).blpop 'working', 0
         if task
           cmd, args, answer, job_id = JSON.parse(task[1])
-          self.method(cmd.to_sym).call args, answer, job_id
+          @_on[cmd.to_sym].call Context.new(self, answer, job_id), *args
         end
       end
     end
