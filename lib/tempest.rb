@@ -3,8 +3,8 @@ require "tempest/cluster"
 class Tempest_bloc
   attr_reader :cluster
 
-  def initialize &block
-    @cluster = Tempest::Cluster.new
+  def initialize redis, &block
+    @cluster = Tempest::Cluster.new redis
     instance_eval &block
   end
 
@@ -14,8 +14,8 @@ class Tempest_bloc
 
 end
 
-def tempest &block
-  Tempest_bloc.new &block
+def tempest redis='localhost:6379', &block
+  Tempest_bloc.new redis, &block
 end
 
 class Worker

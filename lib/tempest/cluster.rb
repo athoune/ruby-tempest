@@ -1,8 +1,6 @@
 require 'json'
 require 'redis'
 
-REDIS = 'localhost:6379'
-
 module Tempest
 
   class Context
@@ -21,8 +19,8 @@ module Tempest
   class Cluster
 
     attr_accessor :loop
-    def initialize
-      @_client = {}
+    def initialize redis='localhost:6379'
+      @redis = redis
       @_on = {}
       @loop = true
       @id = 0
@@ -32,11 +30,10 @@ module Tempest
       @_on[action] = block
     end
 
-
     def loop
       @loop = true
       while @loop
-        task = Tempest.client(REDIS).blpop 'working', 0
+        task = Tempest.client(@redis).blpop 'working', 0
         if task
           cmd, args, answer, job_id = JSON.parse(task[1])
           @_on[cmd.to_sym].call Context.new(self, answer, job_id), *args
@@ -51,7 +48,7 @@ module Tempest
     def work queue, action, args, respond_to
       #FIXME implement the real id tactic
       @id += 1
-      Tempest.client(REDIS).rpush queue, [action, args, respond_to, @id].to_json
+      Tempest.client(@redis).rpush queue, [action, args, respond_to, @id].to_json
       @id
     end
 
