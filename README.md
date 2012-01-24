@@ -20,6 +20,7 @@ Code
 ----
 
 The foreman:
+
 ```ruby
 require 'tempest'
 
@@ -31,6 +32,7 @@ end
 ```
 
 The worker :
+
 ```ruby
 require 'tempest'
 
