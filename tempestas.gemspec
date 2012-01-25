@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name             = "tempestas"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.date             = Time.now.utc.strftime("%Y-%m-%d")
   s.homepage         = "http://github.com/athoune/ruby-tempest"
   s.authors          = "Mathieu Lecarme"
@@ -12,6 +12,6 @@ Gem::Specification.new do |s|
   s.require_paths    = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.add_dependency "redis", "2.2.2"
-  #s.add_development_dependency "minitest", "~>2.0"
+  s.add_development_dependency "rspec", "2.7"
   #s.add_development_dependency "rake"
 end
