@@ -5,7 +5,8 @@ module Tempest
 
   class Context
     attr_reader :respond_to, :job_id
-    def initialize cluster, respond_to, job_id
+    def initialize cluster, action, respond_to, job_id
+      @action = action
       @respond_to = respond_to
       @job_id = job_id
       @cluster = cluster
@@ -13,6 +14,10 @@ module Tempest
 
     def stop
       @cluster.loop = false
+    end
+
+    def answer *args
+      Tempest.client(@respond_to).send @action, @job_id, args.to_json
     end
   end
 
@@ -36,7 +41,7 @@ module Tempest
         task = Tempest.client(@redis).blpop 'working', 0
         if task
           cmd, args, answer, job_id = JSON.parse(task[1])
-          @_on[cmd.to_sym].call Context.new(self, answer, job_id), *args
+          @_on[cmd.to_sym].call Context.new(self, cmd, answer, job_id), *args
         end
       end
     end
