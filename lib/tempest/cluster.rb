@@ -35,10 +35,10 @@ module Tempest
       @_on[action] = block
     end
 
-    def loop
+    def loop queue
       @loop = true
       while @loop
-        task = Tempest.client(@redis).blpop 'working', 0
+        task = Tempest.client(@redis).blpop queue, 0
         if task
           cmd, args, answer, job_id = JSON.parse(task[1])
           @_on[cmd.to_sym].call Context.new(self, cmd, answer, job_id), *args

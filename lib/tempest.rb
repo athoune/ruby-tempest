@@ -35,7 +35,7 @@ class Worker
   end
 
   def start_loop
-    @cluster.loop
+    @cluster.loop @queue
   end
 
   def stop_loop
