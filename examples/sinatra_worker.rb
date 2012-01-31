@@ -16,6 +16,8 @@ tempest do
       input.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
       input.rewind
 
+      input.write env['body'] if env['body']
+
       errors = StringIO.new
       errors.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
       errors.rewind
