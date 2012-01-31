@@ -2,6 +2,7 @@ require 'redis'
 require 'json'
 
 module Tempest
+  # FIXME handling timeout
   class Session
 
     def initialize redis, id, prefix="session:"

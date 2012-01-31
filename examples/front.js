@@ -4,6 +4,18 @@ var redis = require('redis'),
 
 var cpt = 0;
 
+//[TODO] see https://github.com/visionmedia/connect-redis
+var TempestStore = function() {};
+TempestStore.prototype.get = function(sid, cb) {
+
+};
+TempestStore.prototype.set = function(sid, session, cb) {
+    //hmset
+};
+TempestStore.prototype.destroy = function(sid, cb) {
+
+};
+
 var work = function(req, res, next) {
     if(req.headers['content-length']) {
         var size = parseInt(req.headers['content-length'], 10);
@@ -44,6 +56,10 @@ var work_with_body  = function(req, res, next, body) {
 var cluster = tempest.createCluster(function() {
     var web = connect.createServer(
         connect.favicon(),
+        connect.cookieParser(),
+        connect.session({
+            store: new TempestStore(),
+            secret: 'Tempest rulez'}),
         connect.router(function(app) {
 
             app.get('/info', function(req, res, next) {
