@@ -20,6 +20,7 @@ tempest do
       errors.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
       errors.rewind
 
+      path_info, query_string = env['url'].split('?')
       env = {
         "rack.version" => Rack::VERSION,
         "rack.input" => input,
@@ -30,8 +31,8 @@ tempest do
         "rack.url_scheme" => "http",
 
         "REQUEST_METHOD" => env['method'],
-        "PATH_INFO" => env['url'],
-        "QUERY_STRING" => env['query'] || ''
+        "PATH_INFO" => path_info,
+        "QUERY_STRING" => query_string || ''
       }.merge(env)
       status, headers, body = app.call(env)
       context.answer status, headers, body.join('')
