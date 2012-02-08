@@ -1,4 +1,5 @@
 require 'json'
+require 'hiredis'
 require 'redis'
 
 module Tempest
