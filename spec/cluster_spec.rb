@@ -6,7 +6,8 @@ require "tempest"
 describe Tempest::Cluster do
 
   it "should connect and fetch some works to do" do
-    $msg = nil
+    msg = []
+    n = 100
 
     # With the default cluster
     tempest do
@@ -15,19 +16,23 @@ describe Tempest::Cluster do
 
         # on a foo event, with a context an name as arguments
         on :foo do |context, name|
-          $msg = name
-          context.stop # stop the event loop
+          msg << name
+          n -= 1
+          context.stop if n == 0 # stop the event loop
         end
 
         # action: :foo
         # respond_to: nil
         # arguments: ['bar']
-        work :foo, nil, 'bar'
+        100.times do
+          work :foo, nil, 'bar'
+        end
 
       end.start_loop # start the event loop
     end
 
-    $msg.should == 'bar'
+    msg.length.should == 100
+    msg[50].should == 'bar'
 
   end
 end
