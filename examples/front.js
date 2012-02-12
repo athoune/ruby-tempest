@@ -35,7 +35,6 @@ var work = function(req, res, next) {
 };
 
 var work_with_body  = function(req, res, next, body) {
-    var chrono = Date.now();
     cpt += 1;
     args = {
         headers: req.headers,
@@ -49,18 +48,18 @@ var work_with_body  = function(req, res, next, body) {
             function() {});
     cluster.on('id:url:' + job, function(args) {
         //status, headers, body) {
+        res.statusCode = args[0];
         var headers = args[1];
         for (key in headers) {
             res.setHeader(key, headers[key]);
         }
         res.write(args[2]);
-        res.end();
-        //console.log('chrono', Date.now() - chrono);
+        res.end(); //FIXME Why only end doesn't work?
     });
 };
 
 var cluster = tempest.createCluster(function() {
-    var web = connect.createServer(
+    connect(
         connect.favicon(),
         connect.cookieParser(),
         connect.session({
@@ -73,7 +72,6 @@ var cluster = tempest.createCluster(function() {
             });
             app.get('*', work);
             app.post('*', work);
-        }));
-
-    web.listen(1337);
+        })
+    ).listen(1337);
 });
