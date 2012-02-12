@@ -11,15 +11,15 @@ app = Sinatra::Application
 tempest do
 
   worker :sinatra do
-    on :url do |context, env|
-      input = StringIO.new
-      input.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
-      input.rewind
+    input = StringIO.new
+    input.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
+    errors = StringIO.new
+    errors.set_encoding('ASCII-8BIT') if errors.respond_to?(:set_encoding)
 
+    on :url do |context, env|
+      input.rewind
       input.write env['body'] if env['body']
 
-      errors = StringIO.new
-      errors.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
       errors.rewind
 
       path_info, query_string = env['url'].split('?')
